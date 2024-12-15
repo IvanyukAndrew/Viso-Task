@@ -11,13 +11,22 @@ export interface Meal {
   [key: string]: string | null;
 }
 
-export interface Category {
+export interface ICategory {
   idCategory: number;
   strCategory: string;
   strCategoryThumb: string;
   strCategoryDescription: string;
 }
 
+export interface CategoryData {
+  categories: ICategory[];
+}
+
 export interface MealData {
   meals: Meal[];
 }
+
+export type TDetails = {
+  activeCategory: string;
+  searchMeal: string;
+};

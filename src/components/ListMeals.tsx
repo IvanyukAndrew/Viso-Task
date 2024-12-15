@@ -4,14 +4,13 @@ import { ListItem } from './ListItem';
 
 interface Props {
   meals: Meal[];
-  findRecipeById: (id: string) => void;
 }
 
-export const ListMeals: React.FC<Props> = ({ meals, findRecipeById }) => {
+export const ListMeals: React.FC<Props> = ({ meals }) => {
   return (
-    <ul>
+    <ul className="w-full grid grid-cols-3 md:grid-cols-1 lg:grid-cols-3 mb-2">
       {meals.map((meal) => (
-        <ListItem key={meal.idMeal} meal={meal} findRecipeById={findRecipeById} />
+        <ListItem key={meal.idMeal} meal={meal} />
       ))}
     </ul>
   );

@@ -1,43 +1,48 @@
 import React from 'react';
 import { Meal } from '../models';
 import { Link } from 'react-router';
+import { Button } from '@mui/material';
+import { addMeal } from '../store/mealsCart/mealsCartSlice';
+import { useTypedDispatch } from '../hooks/useTypedDispatch';
 
 interface Props {
   meal: Meal;
-  findRecipeById: (id: string) => void;
 }
 
-export const ListItem: React.FC<Props> = ({ meal, findRecipeById }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+export const ListItem: React.FC<Props> = ({ meal }) => {
+  const dispatch = useTypedDispatch();
+  const handleClickToAddMeal = (item: Meal) => {
+    dispatch(addMeal({ ...item }));
+    console.log(item);
+  };
 
-  const toggleText = () => setIsExpanded(!isExpanded);
   return (
-    <li className="m-4 flex gap-4 border border-slate-900 rounded-2xl p-5">
-      <img className="size-60" src={meal.strMealThumb} alt={meal.strMeal} />
+    <li className="max-w-2xl m-4 flex flex-col justify-between items-center gap-4 border border-slate-900 rounded-2xl p-5 shadow-md">
+      <img
+        className="w-[190px] h-[190px] rounded-full"
+        src={meal.strMealThumb}
+        alt={meal.strMeal}
+      />
       <div className="">
-        <div className="flex justify-between">
-          <div className="font-bold text-lg">{meal.strMeal}</div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="font-bold text-lg">name: {meal.strMeal}</div>
+          <div className="font-bold">Country: {meal.strArea}</div>
           <div className="flex gap-4">
-            <Link
-              to={`/recipe/${meal.idMeal}`}
-              onClick={() => findRecipeById(meal.idMeal)}
-              className="p-1 border border-blue-400 bg-blue-300 shadow-md">
-              Подробніше
+            <Link to={`/recipe/${meal.idMeal}`}>
+              <Button variant="contained">Подробніше</Button>
             </Link>
-            <button className="p-1 border border-green-400 bg-green-300 shadow-md">Вибрати</button>
+            <Button
+              variant="outlined"
+              onClick={() => handleClickToAddMeal({ ...meal })}
+              className="w-1/2 border border-green-400 bg-green-300 shadow-md">
+              Вибрати
+            </Button>
           </div>
         </div>
-        <div className="font-bold">{meal.strArea}</div>
-        <p>
-          {isExpanded ? meal.strInstructions : meal.strInstructions.slice(0, 700)}
-          <span
-            className="font-bold cursor-pointer text-blue-900"
-            onClick={toggleText}
-            role="button">
-            {isExpanded ? '...Згорнути' : 'Розгорнути...'}
-          </span>
-        </p>
       </div>
     </li>
   );
 };
+function useAppDispatch() {
+  throw new Error('Function not implemented.');
+}
