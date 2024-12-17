@@ -17,6 +17,10 @@ export interface ICategory {
   strCategoryThumb: string;
   strCategoryDescription: string;
 }
+export interface IIngredients {
+  ingredient: string;
+  quantity: number;
+}
 
 export interface CategoryData {
   categories: ICategory[];

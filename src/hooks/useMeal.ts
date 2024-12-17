@@ -30,7 +30,5 @@ export function useMeal(id: string) {
     return result;
   }, [data]);
 
-  console.log('ingredients', ingredients);
-
   return { data, ingredients, isLoading, isSuccess, isError };
 }

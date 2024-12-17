@@ -8,7 +8,7 @@ interface Props {
 
 export const CartListItem = ({ meal }: Props) => {
   return (
-    <li className="flex justify-between border border-stone-900 rounded-xl gap-4 p-4 mb-4">
+    <li className="flex justify-between border border-stone-900 rounded-xl gap-4 p-4">
       <CartItemLeft meal={meal} />
       <CartItemRight meal={meal} />
     </li>
