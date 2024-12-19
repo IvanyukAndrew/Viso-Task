@@ -1,14 +1,14 @@
 export interface Meal {
   idMeal: string;
   strMeal: string;
-  strDrinkAlternate: string | null;
+  strDrinkAlternate: string;
   strCategory: string;
   strArea: string;
   strInstructions: string;
   strMealThumb: string;
-  strTags: string | null;
+  strTags: string;
   strYoutube: string;
-  [key: string]: string | null;
+  [key: string]: string;
 }
 
 export interface ICategory {
@@ -18,8 +18,8 @@ export interface ICategory {
   strCategoryDescription: string;
 }
 export interface IIngredients {
-  ingredient: string;
-  quantity: number;
+  name: string;
+  measurements: { unit: string; quantity: number }[];
 }
 
 export interface CategoryData {

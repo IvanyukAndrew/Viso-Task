@@ -1,17 +1,17 @@
-import { types } from 'util';
 import { IIngredients, Meal } from './../../models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { parseMeasure } from '../../helper/parseMeasureToUnitAndQuantity';
 
-type MealsCartState = {
+interface MealsCartState {
   meals: Meal[];
   totalItems: number;
   ingredients: IIngredients[];
-};
+}
 
 const initialState: MealsCartState = {
-  meals: [] as Meal[],
+  meals: [],
   totalItems: 0,
-  ingredients: [] as IIngredients[],
+  ingredients: [],
 };
 
 export const mealsCartSlice = createSlice({
@@ -25,26 +25,71 @@ export const mealsCartSlice = createSlice({
       state.totalItems += 1;
 
       for (let i = 1; i <= 20; i++) {
-        const strIngredient = action.payload[`strIngredient${i}`];
-        const strMeasure = action.payload[`strMeasure${i}`];
+        const ingredient = action.payload[`strIngredient${i}`];
+        const measure = action.payload[`strMeasure${i}`];
 
-        if (!strIngredient || !strIngredient.trim()) continue;
+        if (!ingredient) continue;
 
-        const ingredient = `${strIngredient.trim()} - ${strMeasure?.trim() || ''}`.trim();
+        const { quantity, unit } = parseMeasure(measure);
 
-        const existingIngredient = state.ingredients.find((item) => item.ingredient === ingredient);
+        const existingIngredient = state.ingredients.find((item) => item.name === ingredient);
 
         if (existingIngredient) {
-          existingIngredient.quantity += 1;
+          const existingMeasure = existingIngredient.measurements.find(
+            (item) => item.unit === unit,
+          );
+
+          if (existingMeasure) {
+            existingMeasure.quantity += quantity;
+          } else {
+            existingIngredient.measurements.push({ unit, quantity });
+          }
         } else {
-          state.ingredients.push({ ingredient, quantity: 1 });
+          state.ingredients.push({ name: ingredient, measurements: [{ unit, quantity }] });
         }
       }
     },
 
     removeMeal: (state, action) => {
+      const meal = state.meals.find((meal) => meal.idMeal === action.payload);
+      console.log('meal', meal);
+
+      if (!meal) return;
+
       state.meals = state.meals.filter((meal) => meal.idMeal !== action.payload);
       state.totalItems -= 1;
+
+      for (let i = 1; i <= state.ingredients.length; i++) {
+        const ingredient = meal[`strIngredient${i}`];
+        const measure = meal[`strMeasure${i}`];
+
+        console.log('remove', ingredient, measure);
+
+        if (!ingredient) continue;
+        const { quantity, unit } = parseMeasure(measure);
+
+        const existingIngredient = state.ingredients.find((item) => item.name === ingredient);
+
+        if (existingIngredient) {
+          const existingMeasure = existingIngredient.measurements.find(
+            (item) => item.unit === unit,
+          );
+
+          if (existingMeasure) {
+            existingMeasure.quantity -= quantity;
+
+            if (existingMeasure.quantity <= 0) {
+              existingIngredient.measurements = existingIngredient.measurements.filter(
+                (item) => item.unit !== unit,
+              );
+            }
+          }
+
+          if (existingIngredient.measurements.length === 0) {
+            state.ingredients = state.ingredients.filter((item) => item.name !== ingredient);
+          }
+        }
+      }
     },
   },
 });
